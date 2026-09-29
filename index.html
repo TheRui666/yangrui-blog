@@ -24,7 +24,7 @@
         </nav>
         <div class="top-actions">
           <button class="icon-btn" id="themeToggle" type="button" aria-label="切换深色模式" title="切换深色模式">☼</button>
-          <a class="subscribe-button" href="#subscribe">订阅更新 <span>↗</span></a>
+          <button class="subscribe-button" id="authButton" type="button">管理员登录 <span>↗</span></button>
           <button class="menu-btn" id="menuToggle" type="button" aria-label="打开导航">☰</button>
         </div>
       </header>
@@ -81,7 +81,7 @@
 
             <section class="goals-panel" id="goals">
               <div class="section-heading compact"><div><p class="eyebrow">A LITTLE FURTHER</p><h2>我的目标</h2></div><span class="article-count">短期 · 长期</span></div>
-              <form class="goal-form" id="goalForm"><input id="goalInput" type="text" maxlength="100" placeholder="写下一个想完成的目标" required /><select id="goalType"><option value="short">短期目标</option><option value="long">长期目标</option></select><button type="submit">添加</button></form>
+              <form class="goal-form admin-only" id="goalForm"><input id="goalInput" type="text" maxlength="100" placeholder="写下一个想完成的目标" required /><select id="goalType"><option value="short">短期目标</option><option value="long">长期目标</option></select><button type="submit">添加</button></form>
               <div class="goal-list" id="goalList"></div>
             </section>
           </div>
@@ -99,7 +99,7 @@
               <div class="side-card-heading"><p class="eyebrow">NOW</p><span class="live-badge">● LIVE</span></div>
               <h3>最近正在做的事</h3>
               <div class="now-list" id="nowList"></div>
-              <form class="now-form" id="nowForm"><input id="nowInput" maxlength="80" placeholder="写下正在做的事" required /><button type="submit">添加</button></form>
+              <form class="now-form admin-only" id="nowForm"><input id="nowInput" maxlength="80" placeholder="写下正在做的事" required /><button type="submit">添加</button></form>
               <p class="updated-time">最后更新于 2026 年 9 月</p>
             </section>
 

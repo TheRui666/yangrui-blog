@@ -2,9 +2,13 @@ const root = document.documentElement;
 const SUPABASE_URL = 'https://anxnkqggdqkdvjjvcqjl.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_1TZGMO2DcgtfG6bAwg249A_rf8M-Dve';
 const db = window.supabase?.createClient(SUPABASE_URL, SUPABASE_KEY);
+const ADMIN_EMAIL = '2900631800@qq.com';
 const themeToggle = document.querySelector('#themeToggle');
 const menuToggle = document.querySelector('#menuToggle');
 const nav = document.querySelector('.nav-links');
+const authButton = document.querySelector('#authButton');
+const updateAuthUI = async () => { if (!db) return; const {data:{user}} = await db.auth.getUser(); document.querySelectorAll('.admin-only').forEach((el)=>el.classList.toggle('visible', user?.email === ADMIN_EMAIL)); if (authButton) { authButton.textContent = user?.email === ADMIN_EMAIL ? '退出管理员' : '管理员登录'; } };
+authButton?.addEventListener('click', async () => { const {data:{user}} = await db.auth.getUser(); if (user) { await db.auth.signOut(); updateAuthUI(); return; } const email = window.prompt('管理员邮箱', ADMIN_EMAIL); const password = window.prompt('管理员密码'); if (email && password) { const {error} = await db.auth.signInWithPassword({email,password}); if (error) window.alert('登录失败：' + error.message); updateAuthUI(); } });
 
 const readStore = (key) => JSON.parse(localStorage.getItem(key) || '[]');
 const writeStore = (key, value) => localStorage.setItem(key, JSON.stringify(value));
@@ -37,12 +41,13 @@ const loadSharedData = async () => {
 loadSharedData();
 
 const renderGoals = () => { const list = document.querySelector('#goalList'); if (!list) return; list.innerHTML = readStore('yangrui-goals').map((item, index) => `<div class="goal-item"><span>${item.text}</span><span class="goal-tag">${item.type === 'short' ? '短期目标' : '长期目标'}　<button type="button" data-goal="${index}" aria-label="删除目标">×</button></span></div>`).join('') || '<p class="upload-list">还没有目标，写下第一个吧。</p>'; list.querySelectorAll('[data-goal]').forEach((button) => button.addEventListener('click', () => { const goals = readStore('yangrui-goals'); goals.splice(Number(button.dataset.goal),1); writeStore('yangrui-goals', goals); renderGoals(); })); };
-document.querySelector('#goalForm')?.addEventListener('submit', (event) => { event.preventDefault(); const input = document.querySelector('#goalInput'); const goals = readStore('yangrui-goals'); goals.push({text: input.value, type: document.querySelector('#goalType').value}); writeStore('yangrui-goals', goals); input.value=''; renderGoals(); });
+document.querySelector('#goalForm')?.addEventListener('submit', async (event) => { event.preventDefault(); const input = document.querySelector('#goalInput'); const type = document.querySelector('#goalType').value; if (db) await db.from('goals').insert({title:input.value,goal_type:type}); else { const goals = readStore('yangrui-goals'); goals.push({text:input.value,type}); writeStore('yangrui-goals',goals); } input.value=''; await loadSharedData(); });
 renderGoals();
 
 const renderNow = () => { const list = document.querySelector('#nowList'); if (!list) return; const items = readStore('yangrui-now'); list.innerHTML = items.map((item,index) => `<div class="now-item"><span class="now-index">${String(index+1).padStart(2,'0')}</span><span>${item}</span><button type="button" data-now="${index}" aria-label="删除正在做的事">×</button></div>`).join('') || '<p class="upload-list">还没有添加正在做的事。</p>'; list.querySelectorAll('[data-now]').forEach((button) => button.addEventListener('click', () => { const items = readStore('yangrui-now'); items.splice(Number(button.dataset.now),1); writeStore('yangrui-now', items); renderNow(); })); };
-document.querySelector('#nowForm')?.addEventListener('submit', (event) => { event.preventDefault(); const input = document.querySelector('#nowInput'); const items = readStore('yangrui-now'); items.push(input.value); writeStore('yangrui-now', items.slice(-8)); input.value=''; renderNow(); });
+document.querySelector('#nowForm')?.addEventListener('submit', async (event) => { event.preventDefault(); const input = document.querySelector('#nowInput'); if (db) await db.from('now_items').insert({content:input.value}); else { const items = readStore('yangrui-now'); items.push(input.value); writeStore('yangrui-now',items.slice(-8)); } input.value=''; await loadSharedData(); });
 renderNow();
+updateAuthUI();
 
 themeToggle?.addEventListener('click', () => {
   root.classList.toggle('dark');
