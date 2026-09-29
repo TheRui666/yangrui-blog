@@ -24,6 +24,10 @@ const renderGoals = () => { const list = document.querySelector('#goalList'); if
 document.querySelector('#goalForm')?.addEventListener('submit', (event) => { event.preventDefault(); const input = document.querySelector('#goalInput'); const goals = readStore('yangrui-goals'); goals.push({text: input.value, type: document.querySelector('#goalType').value}); writeStore('yangrui-goals', goals); input.value=''; renderGoals(); });
 renderGoals();
 
+const renderNow = () => { const list = document.querySelector('#nowList'); if (!list) return; const items = readStore('yangrui-now'); list.innerHTML = items.map((item,index) => `<div class="now-item"><span class="now-index">${String(index+1).padStart(2,'0')}</span><span>${item}</span><button type="button" data-now="${index}" aria-label="删除正在做的事">×</button></div>`).join('') || '<p class="upload-list">还没有添加正在做的事。</p>'; list.querySelectorAll('[data-now]').forEach((button) => button.addEventListener('click', () => { const items = readStore('yangrui-now'); items.splice(Number(button.dataset.now),1); writeStore('yangrui-now', items); renderNow(); })); };
+document.querySelector('#nowForm')?.addEventListener('submit', (event) => { event.preventDefault(); const input = document.querySelector('#nowInput'); const items = readStore('yangrui-now'); items.push(input.value); writeStore('yangrui-now', items.slice(-8)); input.value=''; renderNow(); });
+renderNow();
+
 themeToggle?.addEventListener('click', () => {
   root.classList.toggle('dark');
   const isDark = root.classList.contains('dark');
