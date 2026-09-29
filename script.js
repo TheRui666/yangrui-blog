@@ -1,4 +1,7 @@
 const root = document.documentElement;
+const SUPABASE_URL = 'https://anxnkqggdqkdvjjvcqjl.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_1TZGMO2DcgtfG6bAwg249A_rf8M-Dve';
+const db = window.supabase?.createClient(SUPABASE_URL, SUPABASE_KEY);
 const themeToggle = document.querySelector('#themeToggle');
 const menuToggle = document.querySelector('#menuToggle');
 const nav = document.querySelector('.nav-links');
@@ -17,8 +20,21 @@ const renderMessages = () => {
   list.innerHTML = readStore('yangrui-messages').map((item) => `<div class="message-item">${item.text.replace(/[&<>]/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]))}<span class="message-time">${item.time}</span></div>`).join('') || '<p class="upload-list">还没有留言，欢迎成为第一个留言的人。</p>';
 };
 document.querySelector('#messageInput')?.addEventListener('input', (event) => { document.querySelector('#messageCount').textContent = `${event.target.value.length} / 280`; });
-document.querySelector('#guestbookForm')?.addEventListener('submit', (event) => { event.preventDefault(); const input = document.querySelector('#messageInput'); const messages = readStore('yangrui-messages'); messages.unshift({text: input.value, time: new Date().toLocaleString('zh-CN',{dateStyle:'medium',timeStyle:'short'})}); writeStore('yangrui-messages', messages.slice(0,30)); input.value=''; document.querySelector('#messageCount').textContent='0 / 280'; renderMessages(); });
+document.querySelector('#guestbookForm')?.addEventListener('submit', async (event) => { event.preventDefault(); const input = document.querySelector('#messageInput'); if (db) { await db.from('messages').insert({content: input.value}); await loadSharedData(); } else { const messages = readStore('yangrui-messages'); messages.unshift({text: input.value, time: new Date().toLocaleString('zh-CN',{dateStyle:'medium',timeStyle:'short'})}); writeStore('yangrui-messages', messages.slice(0,30)); renderMessages(); } input.value=''; document.querySelector('#messageCount').textContent='0 / 280'; });
 renderMessages();
+
+const loadSharedData = async () => {
+  if (!db) return;
+  const [{data: messages}, {data: goals}, {data: nowItems}] = await Promise.all([
+    db.from('messages').select('*').order('created_at', {ascending:false}),
+    db.from('goals').select('*').order('created_at', {ascending:true}),
+    db.from('now_items').select('*').order('created_at', {ascending:true})
+  ]);
+  if (messages && document.querySelector('#messageList')) { document.querySelector('#messageList').innerHTML = messages.map((item) => `<div class="message-item">${item.content.replace(/[&<>]/g,(c)=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]))}<span class="message-time">${new Date(item.created_at).toLocaleString('zh-CN',{dateStyle:'medium',timeStyle:'short'})}</span></div>`).join('') || '<p class="upload-list">还没有留言，欢迎成为第一个留言的人。</p>'; }
+  if (goals && document.querySelector('#goalList')) { writeStore('yangrui-goals', goals.map((g)=>({text:g.title,type:g.goal_type}))); renderGoals(); }
+  if (nowItems && document.querySelector('#nowList')) { writeStore('yangrui-now', nowItems.map((n)=>n.content)); renderNow(); }
+};
+loadSharedData();
 
 const renderGoals = () => { const list = document.querySelector('#goalList'); if (!list) return; list.innerHTML = readStore('yangrui-goals').map((item, index) => `<div class="goal-item"><span>${item.text}</span><span class="goal-tag">${item.type === 'short' ? '短期目标' : '长期目标'}　<button type="button" data-goal="${index}" aria-label="删除目标">×</button></span></div>`).join('') || '<p class="upload-list">还没有目标，写下第一个吧。</p>'; list.querySelectorAll('[data-goal]').forEach((button) => button.addEventListener('click', () => { const goals = readStore('yangrui-goals'); goals.splice(Number(button.dataset.goal),1); writeStore('yangrui-goals', goals); renderGoals(); })); };
 document.querySelector('#goalForm')?.addEventListener('submit', (event) => { event.preventDefault(); const input = document.querySelector('#goalInput'); const goals = readStore('yangrui-goals'); goals.push({text: input.value, type: document.querySelector('#goalType').value}); writeStore('yangrui-goals', goals); input.value=''; renderGoals(); });
