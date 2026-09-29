@@ -25,7 +25,7 @@ const renderMessages = () => {
   list.innerHTML = readStore('yangrui-messages').map((item) => `<div class="message-item">${item.text.replace(/[&<>]/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]))}<span class="message-time">${item.time}</span></div>`).join('') || '<p class="upload-list">还没有留言，欢迎成为第一个留言的人。</p>';
 };
 document.querySelector('#messageInput')?.addEventListener('input', (event) => { document.querySelector('#messageCount').textContent = `${event.target.value.length} / 280`; });
-document.querySelector('#guestbookForm')?.addEventListener('submit', async (event) => { event.preventDefault(); const input = document.querySelector('#messageInput'); if (db) { await db.from('messages').insert({content: input.value}); await loadSharedData(); } else { const messages = readStore('yangrui-messages'); messages.unshift({text: input.value, time: new Date().toLocaleString('zh-CN',{dateStyle:'medium',timeStyle:'short'})}); writeStore('yangrui-messages', messages.slice(0,30)); renderMessages(); } input.value=''; document.querySelector('#messageCount').textContent='0 / 280'; });
+document.querySelector('#guestbookForm')?.addEventListener('submit', async (event) => { event.preventDefault(); const input = document.querySelector('#messageInput'); const content = input.value.trim(); if (!content) return; const submitButton = event.currentTarget.querySelector('button[type=submit]'); if (submitButton) submitButton.disabled = true; try { if (db) { const { error } = await db.from('messages').insert({content}); if (error) throw error; await loadSharedData(); } else { const messages = readStore('yangrui-messages'); messages.unshift({text: content, time: new Date().toLocaleString('zh-CN',{dateStyle:'medium',timeStyle:'short'})}); writeStore('yangrui-messages', messages.slice(0,30)); renderMessages(); } input.value=''; document.querySelector('#messageCount').textContent='0 / 280'; } catch (error) { window.alert('留言发送失败，请稍后重试：' + (error.message || '网络错误')); } finally { if (submitButton) submitButton.disabled = false; } });
 renderMessages();
 
 const loadSharedData = async () => {
@@ -85,3 +85,4 @@ document.querySelector('#subscribeForm')?.addEventListener('submit', (event) => 
 document.querySelector('.load-more')?.addEventListener('click', (event) => {
   event.currentTarget.textContent = '已经到底啦 · 新文章很快见';
 });
+
