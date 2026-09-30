@@ -30,11 +30,11 @@ const byId = (items, id) => items.find((x) => String(x.id) === String(id));
 
 // 页面背景只保存在访客自己的浏览器中，不会写入 Supabase，也不会改变其他访客的选择。
 const WALLPAPERS = [
-  { name: '林俊杰 · JJ20 现场', note: '把热爱唱成光', url: 'https://res.klook.com/image/upload/v1731047956/q8m8bjnodxybvodisxr8.jpg' },
-  { name: '林俊杰 · 新加坡演唱会', note: '在夜色里发亮', url: 'https://thescarletsingapore.com/uploads/blog/jj-lin-concert-singapore-2024.webp' },
-  { name: '林俊杰 · 舞台光影', note: '让旋律有回声', url: 'https://ak-d.tripcdn.com/images/0101u12000d4ulukgB8FC.jpg' },
-  { name: '林俊杰 · 现场肖像', note: '温柔地抵达', url: 'https://static1.straitstimes.com.sg/s3fs-public/styles/large30x20/public/articles/2019/12/22/nmjjlin2212.jpg' },
-  { name: '林俊杰 · 聚光灯下', note: '和自己相遇', url: 'https://res.klook.com/image/upload/v1731047956/q8m8bjnodxybvodisxr8.jpg' }
+  { name: '林俊杰 · 光阴副本', note: 'Turn Of A Page', url: 'https://i.scdn.co/image/ab67616d0000b273ed2bffaaea5b89bf5c0e5da4' },
+  { name: '林俊杰 · 新地球', note: '2014 专辑封面', url: 'https://i.scdn.co/image/ab67616d0000b2732e9e9086126a0d7717fcb56b' },
+  { name: '林俊杰 · 修炼爱情', note: '《因你而在》收录曲', url: 'https://i.scdn.co/image/ab67616d0000b273d007039d7dbb3ac88b4c5686' },
+  { name: '林俊杰 · 伟大的渺小', note: '2017 专辑封面', url: 'https://i.scdn.co/image/ab67616d0000b2732660967c8c43fbc19631d345' },
+  { name: '林俊杰 · 北京 2025', note: '在万人灯海中歌唱', url: 'https://commons.wikimedia.org/wiki/Special:FilePath/%E6%9E%97%E4%BF%8A%E6%9D%B0JJ20%20FINAL%20LAP%E6%BC%94%E5%94%B1%E4%BC%9A%E5%8C%97%E4%BA%AC%E7%AB%99%E9%92%A2%E7%90%B4%E7%A7%BB%E5%8A%A8%E8%88%9E%E5%8F%B0.jpg?width=2400' }
 ];
 function setupWallpapers() {
   const wrap = document.querySelector('#wallpaperOptions'); if (!wrap) return;
@@ -44,6 +44,14 @@ function setupWallpapers() {
   wrap.querySelectorAll('[data-wallpaper]').forEach((button) => button.addEventListener('click', () => apply(Number(button.dataset.wallpaper))));
   apply(Math.min(Number(selected) || 0, WALLPAPERS.length - 1));
 }
+
+// 轻微视差：页面上下滚动时，背景以较慢速度移动。
+const updateBackgroundParallax = () => {
+  const shift = Math.max(-42, Math.min(42, window.scrollY * -0.12));
+  document.documentElement.style.setProperty('--bg-parallax', `${shift}px`);
+};
+window.addEventListener('scroll', updateBackgroundParallax, { passive: true });
+updateBackgroundParallax();
 
 async function updateAuthUI() {
   if (!db) return;
@@ -107,4 +115,5 @@ renderMessages(); renderGoals(); renderNow(); setupWallpapers(); updateAuthUI();
 themeToggle?.addEventListener('click', () => { root.classList.toggle('dark'); const dark = root.classList.contains('dark'); themeToggle.textContent = dark ? '☾' : '☼'; themeToggle.setAttribute('aria-label', dark ? '切换浅色模式' : '切换深色模式'); });
 menuToggle?.addEventListener('click', () => nav?.classList.toggle('mobile-open'));
 document.querySelector('#subscribeForm')?.addEventListener('submit', (e) => { e.preventDefault(); const email = document.querySelector('#email'); if (!email.value.trim()) return; document.querySelector('#formMessage').textContent = '已收到，下一封信见。'; email.value = ''; });
+
 
