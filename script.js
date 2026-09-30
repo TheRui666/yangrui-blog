@@ -25,9 +25,9 @@ const byId = (items, id) => items.find((x) => String(x.id) === String(id));
 const WALLPAPERS = [
   { name: '林俊杰 · JJ20 现场', note: '把热爱唱成光', url: 'https://res.klook.com/image/upload/v1731047956/q8m8bjnodxybvodisxr8.jpg' },
   { name: '林俊杰 · 新加坡演唱会', note: '在夜色里发亮', url: 'https://thescarletsingapore.com/uploads/blog/jj-lin-concert-singapore-2024.webp' },
-  { name: '林俊杰 · 舞台光影', note: '让旋律有回声', url: 'https://static01.nyt.com/images/2024/12/09/arts/09jjlin/09jjlin-superJumbo.jpg' },
-  { name: '林俊杰 · 现场肖像', note: '温柔地抵达', url: 'https://upload.wikimedia.org/wikipedia/commons/6/6f/JJ_Lin_at_Taipei_Concert.jpg' },
-  { name: '林俊杰 · 聚光灯下', note: '和自己相遇', url: 'https://i0.wp.com/www.bandwagon.asia/wp-content/uploads/2024/12/JJ-Lin-JJ20-Final-Lap.jpg?fit=2000%2C1333&ssl=1' }
+  { name: '林俊杰 · 舞台光影', note: '让旋律有回声', url: 'https://res.klook.com/image/upload/v1731047956/q8m8bjnodxybvodisxr8.jpg' },
+  { name: '林俊杰 · 现场肖像', note: '温柔地抵达', url: 'https://thescarletsingapore.com/uploads/blog/jj-lin-concert-singapore-2024.webp' },
+  { name: '林俊杰 · 聚光灯下', note: '和自己相遇', url: 'https://res.klook.com/image/upload/v1731047956/q8m8bjnodxybvodisxr8.jpg' }
 ];
 function setupWallpapers() {
   const wrap = document.querySelector('#wallpaperOptions'); if (!wrap) return;
