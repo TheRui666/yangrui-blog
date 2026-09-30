@@ -23,11 +23,11 @@ const byId = (items, id) => items.find((x) => String(x.id) === String(id));
 
 // 页面背景只保存在访客自己的浏览器中，不会写入 Supabase，也不会改变其他访客的选择。
 const WALLPAPERS = [
-  { name: '林俊杰 · 舞台光影 01', note: '把热爱唱成光', url: 'https://images.unsplash.com/photo-1506157786151-b8491531f063?auto=format&fit=crop&w=1800&q=88' },
-  { name: '林俊杰 · 舞台光影 02', note: '在夜色里发亮', url: 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=1800&q=88' },
-  { name: '林俊杰 · 舞台光影 03', note: '让旋律有回声', url: 'https://images.unsplash.com/photo-1524368535928-5b5e00ddc76b?auto=format&fit=crop&w=1800&q=88' },
-  { name: '林俊杰 · 舞台光影 04', note: '温柔地抵达', url: 'https://images.unsplash.com/photo-1521337581100-8ca9a73a5f79?auto=format&fit=crop&w=1800&q=88' },
-  { name: '林俊杰 · 舞台光影 05', note: '和自己相遇', url: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=1800&q=88' }
+  { name: '林俊杰 · JJ20 现场', note: '把热爱唱成光', url: 'https://res.klook.com/image/upload/v1731047956/q8m8bjnodxybvodisxr8.jpg' },
+  { name: '林俊杰 · 新加坡演唱会', note: '在夜色里发亮', url: 'https://thescarletsingapore.com/uploads/blog/jj-lin-concert-singapore-2024.webp' },
+  { name: '林俊杰 · 舞台光影', note: '让旋律有回声', url: 'https://static01.nyt.com/images/2024/12/09/arts/09jjlin/09jjlin-superJumbo.jpg' },
+  { name: '林俊杰 · 现场肖像', note: '温柔地抵达', url: 'https://upload.wikimedia.org/wikipedia/commons/6/6f/JJ_Lin_at_Taipei_Concert.jpg' },
+  { name: '林俊杰 · 聚光灯下', note: '和自己相遇', url: 'https://i0.wp.com/www.bandwagon.asia/wp-content/uploads/2024/12/JJ-Lin-JJ20-Final-Lap.jpg?fit=2000%2C1333&ssl=1' }
 ];
 function setupWallpapers() {
   const wrap = document.querySelector('#wallpaperOptions'); if (!wrap) return;
