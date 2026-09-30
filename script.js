@@ -1,4 +1,6 @@
 const root = document.documentElement;
+// 深色是网站的默认主题；访客仍可使用右上角按钮切换回浅色。
+root.classList.add('dark');
 const SUPABASE_URL = 'https://anxnkqggdqkdvjjvcqjl.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_1TZGMO2DcgtfG6bAwg249A_rf8M-Dve';
 const ADMIN_EMAIL = '2900631800@qq.com';
@@ -10,6 +12,11 @@ const rememberId = (id) => localStorage.setItem(IDS_KEY, JSON.stringify([...new 
 const forgetId = (id) => localStorage.setItem(IDS_KEY, JSON.stringify(ownedIds().filter((v) => v !== String(id))));
 const db = window.supabase?.createClient(SUPABASE_URL, SUPABASE_KEY, { global: { headers: { 'x-owner-token': ownerToken } } });
 const themeToggle = document.querySelector('#themeToggle');
+if (themeToggle) {
+  themeToggle.textContent = '☾';
+  themeToggle.setAttribute('aria-label', '切换浅色模式');
+  themeToggle.setAttribute('title', '切换浅色模式');
+}
 const menuToggle = document.querySelector('#menuToggle');
 const nav = document.querySelector('.nav-links');
 const authButton = document.querySelector('#authButton');
