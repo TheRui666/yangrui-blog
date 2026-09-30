@@ -196,3 +196,8 @@ h1 em { color: var(--green-2); font-style: normal; }
   .footer-bottom { flex-direction: column; gap: 13px; }
   .goal-form { grid-template-columns: 1fr; }
 }
+
+.message-meta { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+.message-delete { padding:3px 8px; border:1px solid var(--line); border-radius:999px; color:var(--muted); background:transparent; font-family:var(--mono); font-size:9px; cursor:pointer; }
+.message-delete:hover { color:var(--orange); border-color:var(--orange); }
+
