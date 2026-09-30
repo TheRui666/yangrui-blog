@@ -14,7 +14,9 @@
 
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
-body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--sans); }
+body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--sans); transition: background .35s ease, color .35s ease; }
+body::before { content: ''; position: fixed; inset: 0; z-index: -2; background-image: var(--wallpaper, none); background-size: cover; background-position: center; opacity: .16; filter: saturate(.82) contrast(.96); transition: background-image .4s ease, opacity .35s ease; }
+body::after { content: ''; position: fixed; inset: 0; z-index: -1; pointer-events: none; background: linear-gradient(180deg, rgba(244,240,232,.92) 0%, rgba(244,240,232,.72) 48%, rgba(244,240,232,.95) 100%); }
 a { color: inherit; text-decoration: none; }
 button, input { font: inherit; }
 button { border: 0; cursor: pointer; }
@@ -150,6 +152,18 @@ h1 em { color: var(--green-2); font-style: normal; }
 .footer-links a:hover, .footer-social a:hover { color: var(--green-2); }
 .footer-bottom { display: flex; justify-content: space-between; color: var(--muted); font-family: var(--mono); font-size: 9px; }
 .footer-social { display: flex; gap: 16px; }
+.wallpaper-picker { margin: 35px 0 42px; padding: 25px 0 0; border-top: 1px solid var(--line); }
+.wallpaper-picker-heading { display: flex; align-items: end; justify-content: space-between; gap: 20px; }
+.wallpaper-picker h2 { margin: 0; font-family: var(--serif); font-size: 24px; letter-spacing: -.05em; }
+.wallpaper-options { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; margin-top: 20px; }
+.wallpaper-option { position: relative; min-height: 105px; overflow: hidden; padding: 0; border: 2px solid transparent; border-radius: 12px; background: var(--paper-2); cursor: pointer; box-shadow: 0 8px 20px rgba(21,62,53,.08); transition: transform .2s ease, border-color .2s ease; }
+.wallpaper-option:hover { transform: translateY(-3px); }
+.wallpaper-option.active { border-color: var(--orange); }
+.wallpaper-option::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 22%, rgba(0,0,0,.68)); }
+.wallpaper-option span { position: absolute; z-index: 1; left: 11px; right: 8px; bottom: 9px; color: #fff; text-align: left; font-family: var(--mono); font-size: 9px; letter-spacing: .04em; text-shadow: 0 1px 4px rgba(0,0,0,.4); }
+.wallpaper-option small { display: block; margin-top: 3px; color: rgba(255,255,255,.76); font-family: var(--sans); font-size: 9px; }
+.dark body::after, .dark::after { background: linear-gradient(180deg, rgba(23,33,29,.91) 0%, rgba(23,33,29,.75) 48%, rgba(23,33,29,.95) 100%); }
+.dark body::before { opacity: .22; }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
 .admin-only { display: none; }
 .admin-only.visible { display: flex; }
@@ -194,6 +208,8 @@ h1 em { color: var(--green-2); font-style: normal; }
   .article-image { min-height: 190px; }
   .sidebar { display: flex; }
   .footer-bottom { flex-direction: column; gap: 13px; }
+  .wallpaper-picker-heading { align-items: start; flex-direction: column; gap: 8px; }
+  .wallpaper-options { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .goal-form { grid-template-columns: 1fr; }
 }
 

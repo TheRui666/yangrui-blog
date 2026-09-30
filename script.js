@@ -21,6 +21,23 @@ const save = (k, v) => localStorage.setItem(k, JSON.stringify(v));
 const fail = (label, e) => window.alert(`${label}：${e?.message || '网络错误，请稍后重试'}`);
 const byId = (items, id) => items.find((x) => String(x.id) === String(id));
 
+// 页面背景只保存在访客自己的浏览器中，不会写入 Supabase，也不会改变其他访客的选择。
+const WALLPAPERS = [
+  { name: '林俊杰 · 舞台光影 01', note: '把热爱唱成光', url: 'https://images.unsplash.com/photo-1506157786151-b8491531f063?auto=format&fit=crop&w=1800&q=88' },
+  { name: '林俊杰 · 舞台光影 02', note: '在夜色里发亮', url: 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=1800&q=88' },
+  { name: '林俊杰 · 舞台光影 03', note: '让旋律有回声', url: 'https://images.unsplash.com/photo-1524368535928-5b5e00ddc76b?auto=format&fit=crop&w=1800&q=88' },
+  { name: '林俊杰 · 舞台光影 04', note: '温柔地抵达', url: 'https://images.unsplash.com/photo-1521337581100-8ca9a73a5f79?auto=format&fit=crop&w=1800&q=88' },
+  { name: '林俊杰 · 舞台光影 05', note: '和自己相遇', url: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=1800&q=88' }
+];
+function setupWallpapers() {
+  const wrap = document.querySelector('#wallpaperOptions'); if (!wrap) return;
+  const key = 'yangrui-wallpaper'; const selected = localStorage.getItem(key) || '0';
+  const apply = (index) => { const item = WALLPAPERS[index] || WALLPAPERS[0]; document.body.style.setProperty('--wallpaper', `url("${item.url}")`); localStorage.setItem(key, String(index)); wrap.querySelectorAll('.wallpaper-option').forEach((b, i) => b.classList.toggle('active', i === index)); };
+  wrap.innerHTML = WALLPAPERS.map((item, i) => `<button class="wallpaper-option" type="button" data-wallpaper="${i}" style="background-image:url('${item.url}')" aria-label="选择${esc(item.name)}"><span>${esc(item.name)}<small>${esc(item.note)}</small></span></button>`).join('');
+  wrap.querySelectorAll('[data-wallpaper]').forEach((button) => button.addEventListener('click', () => apply(Number(button.dataset.wallpaper))));
+  apply(Math.min(Number(selected) || 0, WALLPAPERS.length - 1));
+}
+
 async function updateAuthUI() {
   if (!db) return;
   const { data:{ user } } = await db.auth.getUser();
@@ -79,7 +96,7 @@ async function loadSharedData() {
   if (goals.error) fail('目标读取失败', goals.error); else { window.sharedGoals = goals.data || []; renderGoals(); }
   if (now.error) fail('正在做的事读取失败', now.error); else { window.sharedNow = now.data || []; renderNow(); }
 }
-renderMessages(); renderGoals(); renderNow(); updateAuthUI(); loadSharedData();
+renderMessages(); renderGoals(); renderNow(); setupWallpapers(); updateAuthUI(); loadSharedData();
 themeToggle?.addEventListener('click', () => { root.classList.toggle('dark'); const dark = root.classList.contains('dark'); themeToggle.textContent = dark ? '☾' : '☼'; themeToggle.setAttribute('aria-label', dark ? '切换浅色模式' : '切换深色模式'); });
 menuToggle?.addEventListener('click', () => nav?.classList.toggle('mobile-open'));
 document.querySelector('#subscribeForm')?.addEventListener('submit', (e) => { e.preventDefault(); const email = document.querySelector('#email'); if (!email.value.trim()) return; document.querySelector('#formMessage').textContent = '已收到，下一封信见。'; email.value = ''; });
