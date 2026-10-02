@@ -1,5 +1,5 @@
 const root = document.documentElement;
-// 深色是网站的默认主题；访客仍可使用右上角按钮切换回浅色。
+// 深色是网站的默认主题；访客仍可使用右上角按钮切换回浅色
 root.classList.add('dark');
 const SUPABASE_URL = 'https://anxnkqggdqkdvjjvcqjl.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_1TZGMO2DcgtfG6bAwg249A_rf8M-Dve';
@@ -21,6 +21,8 @@ const menuToggle = document.querySelector('#menuToggle');
 const nav = document.querySelector('.nav-links');
 const authButton = document.querySelector('#authButton');
 let isAdmin = false;
+const MESSAGE_PAGE_SIZE = 6;
+let messagePage = 1;
 const esc = (v) => String(v ?? '').replace(/[&<>"']/g, (c) => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
 const fmt = (v) => new Date(v).toLocaleString('zh-CN', { dateStyle:'medium', timeStyle:'short' });
 const local = (k) => JSON.parse(localStorage.getItem(k) || '[]');
@@ -28,7 +30,7 @@ const save = (k, v) => localStorage.setItem(k, JSON.stringify(v));
 const fail = (label, e) => window.alert(`${label}：${e?.message || '网络错误，请稍后重试'}`);
 const byId = (items, id) => items.find((x) => String(x.id) === String(id));
 
-// 页面背景只保存在访客自己的浏览器中，不会写入 Supabase，也不会改变其他访客的选择。
+// 页面背景只保存在访客自己的浏览器中，不会写入 Supabase，也不会改变其他访客的选择
 const WALLPAPERS = [
   { name: '林俊杰 · 光阴副本', note: 'Turn Of A Page', url: 'https://i.scdn.co/image/ab67616d0000b273ed2bffaaea5b89bf5c0e5da4' },
   { name: '林俊杰 · 新地球', note: '2014 专辑封面', url: 'https://i.scdn.co/image/ab67616d0000b2732e9e9086126a0d7717fcb56b' },
@@ -45,7 +47,7 @@ function setupWallpapers() {
   apply(Math.min(Number(selected) || 0, WALLPAPERS.length - 1));
 }
 
-// 轻微视差：页面上下滚动时，背景以较慢速度移动。
+// 轻微视差：页面上下滚动时，背景以较慢速度移动
 const updateBackgroundParallax = () => {
   const shift = Math.max(-42, Math.min(42, window.scrollY * -0.12));
   document.documentElement.style.setProperty('--bg-parallax', `${shift}px`);
@@ -75,8 +77,19 @@ document.querySelector('#documentInput')?.addEventListener('change', (e) => { co
 function renderMessages(messages = window.sharedMessages || []) {
   const list = document.querySelector('#messageList'); if (!list) return;
   if (!db) messages = local('yangrui-messages');
+  messages = Array.isArray(messages) ? messages : [];
+  const pageCount = Math.max(1, Math.ceil(messages.length / MESSAGE_PAGE_SIZE));
+  messagePage = Math.min(Math.max(1, messagePage), pageCount);
+  const start = (messagePage - 1) * MESSAGE_PAGE_SIZE;
+  const visibleMessages = messages.slice(start, start + MESSAGE_PAGE_SIZE);
   const mine = ownedIds();
-  list.innerHTML = messages.map((m) => { const canDelete = isAdmin || mine.includes(String(m.id)); return `<div class="message-item"><div>${esc(m.content ?? m.text)}</div><div class="message-meta"><span class="message-time">${esc(m.created_at ? fmt(m.created_at) : m.time)}</span>${canDelete ? `<button type="button" class="message-delete" data-delete-message="${esc(m.id)}">删除</button>` : ''}</div></div>`; }).join('') || '<p class="upload-list">还没有留言，欢迎成为第一个留言的人。</p>';
+  list.innerHTML = visibleMessages.map((m) => { const canDelete = isAdmin || mine.includes(String(m.id)); return `<div class="message-item"><div>${esc(m.content ?? m.text)}</div><div class="message-meta"><span class="message-time">${esc(m.created_at ? fmt(m.created_at) : m.time)}</span>${canDelete ? `<button type="button" class="message-delete" data-delete-message="${esc(m.id)}">删除</button>` : ''}</div></div>`; }).join('') || '<p class="upload-list">还没有留言，欢迎成为第一个留言的人</p>';
+  const pagination = document.querySelector('#messagePagination');
+  if (pagination) {
+    pagination.innerHTML = messages.length > MESSAGE_PAGE_SIZE ? `<button type="button" class="pagination-button" data-message-page="prev" ${messagePage === 1 ? 'disabled' : ''}>上一页</button><span class="pagination-status">第 ${messagePage} / ${pageCount} 页</span><button type="button" class="pagination-button" data-message-page="next" ${messagePage === pageCount ? 'disabled' : ''}>下一页</button>` : '';
+    pagination.querySelector('[data-message-page="prev"]')?.addEventListener('click', () => { if (messagePage > 1) { messagePage -= 1; renderMessages(messages); } });
+    pagination.querySelector('[data-message-page="next"]')?.addEventListener('click', () => { if (messagePage < pageCount) { messagePage += 1; renderMessages(messages); } });
+  }
   list.querySelectorAll('[data-delete-message]').forEach((b) => b.addEventListener('click', async () => {
     const id = b.dataset.deleteMessage; if (!confirm('确定删除这条留言吗？')) return;
     try { if (db) { const { error } = await db.from('messages').delete().eq('id', id); if (error) throw error; forgetId(id); await loadSharedData(); } else { save('yangrui-messages', local('yangrui-messages').filter((m) => String(m.id) !== String(id))); renderMessages(); } } catch (e) { fail('留言删除失败', e); }
@@ -90,7 +103,7 @@ document.querySelector('#guestbookForm')?.addEventListener('submit', async (e) =
 
 function renderGoals() {
   const list = document.querySelector('#goalList'); if (!list) return; const items = window.sharedGoals || local('yangrui-goals');
-  list.innerHTML = items.map((m, i) => `<div class="goal-item"><span>${esc(m.title || m.text)}</span><span class="goal-tag">${(m.goal_type || m.type) === 'short' ? '短期目标' : '长期目标'} ${isAdmin ? `<button type="button" data-edit-goal="${esc(m.id ?? i)}">编辑</button><button type="button" data-goal="${esc(m.id ?? i)}">×</button>` : ''}</span></div>`).join('') || '<p class="upload-list">还没有目标，写下第一个吧。</p>';
+  list.innerHTML = items.map((m, i) => `<div class="goal-item"><span>${esc(m.title || m.text)}</span><span class="goal-tag">${(m.goal_type || m.type) === 'short' ? '短期目标' : '长期目标'} ${isAdmin ? `<button type="button" data-edit-goal="${esc(m.id ?? i)}">编辑</button><button type="button" data-goal="${esc(m.id ?? i)}">×</button>` : ''}</span></div>`).join('') || '<p class="upload-list">还没有目标，写下第一个吧</p>';
   list.querySelectorAll('[data-edit-goal]').forEach((b) => b.addEventListener('click', async () => { const m = byId(items, b.dataset.editGoal) || items[Number(b.dataset.editGoal)]; if (!m) return; const title = prompt('修改目标内容', m.title || m.text || ''); if (!title?.trim()) return; try { if (db && m.id) { const { error } = await db.from('goals').update({ title:title.trim() }).eq('id', m.id); if (error) throw error; } else { m.title = title.trim(); m.text = title.trim(); save('yangrui-goals', items); } await loadSharedData(); } catch (e) { fail('目标修改失败', e); } }));
   list.querySelectorAll('[data-goal]').forEach((b) => b.addEventListener('click', async () => { const m = byId(items, b.dataset.goal) || items[Number(b.dataset.goal)]; if (!m) return; try { if (db && m.id) { const { error } = await db.from('goals').delete().eq('id', m.id); if (error) throw error; } else { items.splice(Number(b.dataset.goal), 1); save('yangrui-goals', items); } await loadSharedData(); } catch (e) { fail('目标删除失败', e); } }));
 }
@@ -98,7 +111,7 @@ document.querySelector('#goalForm')?.addEventListener('submit', async (e) => { e
 
 function renderNow() {
   const list = document.querySelector('#nowList'); if (!list) return; const items = window.sharedNow || local('yangrui-now');
-  list.innerHTML = items.map((m, i) => `<div class="now-item"><span class="now-index">${String(i+1).padStart(2,'0')}</span><span>${esc(m.content || m)}</span>${isAdmin ? `<button type="button" data-edit-now="${esc(m.id ?? i)}">编辑</button><button type="button" data-now="${esc(m.id ?? i)}">×</button>` : ''}</div>`).join('') || '<p class="upload-list">还没有添加正在做的事。</p>';
+  list.innerHTML = items.map((m, i) => `<div class="now-item"><span class="now-index">${String(i+1).padStart(2,'0')}</span><span>${esc(m.content || m)}</span>${isAdmin ? `<button type="button" data-edit-now="${esc(m.id ?? i)}">编辑</button><button type="button" data-now="${esc(m.id ?? i)}">×</button>` : ''}</div>`).join('') || '<p class="upload-list">还没有添加正在做的事</p>';
   list.querySelectorAll('[data-edit-now]').forEach((b) => b.addEventListener('click', async () => { const m = byId(items, b.dataset.editNow) || items[Number(b.dataset.editNow)]; if (!m) return; const content = prompt('修改正在做的事', m.content || m || ''); if (!content?.trim()) return; try { if (db && m.id) { const { error } = await db.from('now_items').update({ content:content.trim() }).eq('id', m.id); if (error) throw error; } else { items[Number(b.dataset.editNow)] = content.trim(); save('yangrui-now', items); } await loadSharedData(); } catch (x) { fail('正在做的事修改失败', x); } }));
   list.querySelectorAll('[data-now]').forEach((b) => b.addEventListener('click', async () => { const m = byId(items, b.dataset.now) || items[Number(b.dataset.now)]; if (!m) return; try { if (db && m.id) { const { error } = await db.from('now_items').delete().eq('id', m.id); if (error) throw error; } else { items.splice(Number(b.dataset.now), 1); save('yangrui-now', items); } await loadSharedData(); } catch (x) { fail('正在做的事删除失败', x); } }));
 }
@@ -114,6 +127,7 @@ async function loadSharedData() {
 renderMessages(); renderGoals(); renderNow(); setupWallpapers(); updateAuthUI(); loadSharedData();
 themeToggle?.addEventListener('click', () => { root.classList.toggle('dark'); const dark = root.classList.contains('dark'); themeToggle.textContent = dark ? '☾' : '☼'; themeToggle.setAttribute('aria-label', dark ? '切换浅色模式' : '切换深色模式'); });
 menuToggle?.addEventListener('click', () => nav?.classList.toggle('mobile-open'));
-document.querySelector('#subscribeForm')?.addEventListener('submit', (e) => { e.preventDefault(); const email = document.querySelector('#email'); if (!email.value.trim()) return; document.querySelector('#formMessage').textContent = '已收到，下一封信见。'; email.value = ''; });
+document.querySelector('#subscribeForm')?.addEventListener('submit', (e) => { e.preventDefault(); const email = document.querySelector('#email'); if (!email.value.trim()) return; document.querySelector('#formMessage').textContent = '已收到，下一封信见'; email.value = ''; });
+
 
 

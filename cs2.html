@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="zh-CN" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Team Spirit · 杨睿的 CS2 副页</title>
+    <link rel="stylesheet" href="styles.css?v=20261002-stage2" />
+  </head>
+  <body class="stage-page">
+    <div class="site-shell">
+      <header class="topbar">
+        <a class="brand" href="index.html" aria-label="回到首页"><span class="brand-mark">yr</span><span>杨睿的字里行间</span></a>
+        <nav class="nav-links" aria-label="主导航"><a href="index.html#documents">文档</a><a href="index.html#guestbook">留言</a><a href="about.html">关于我</a><a href="index.html#goals">目标</a></nav>
+        <div class="top-actions"><a class="subscribe-button" href="index.html">回到首页 <span>↗</span></a></div>
+      </header>
+
+      <main class="stage" id="stage">
+        <figure class="stage-slide is-active"><img class="stage-photo" src="assets/players/stage-donk.webp?v=20261002c" alt="donk" /><figcaption>donk</figcaption></figure>
+        <figure class="stage-slide"><img class="stage-photo" src="assets/players/stage-magixx.webp?v=20261002c" alt="magixx" /><figcaption>magixx</figcaption></figure>
+        <figure class="stage-slide"><img class="stage-photo" src="assets/players/stage-sh1ro.webp?v=20261002c" alt="sh1ro" /><figcaption>sh1ro</figcaption></figure>
+        <figure class="stage-slide"><img class="stage-photo" src="assets/players/stage-zont1x.webp?v=20261002c" alt="zont1x" style="object-position:50% 40%" /><figcaption>zont1x</figcaption></figure>
+        <figure class="stage-slide"><img class="stage-photo" src="assets/players/stage-tn1r.webp?v=20261002c" alt="tN1R" /><figcaption>tN1R</figcaption></figure>
+        <figure class="stage-slide"><img class="stage-photo" src="assets/players/stage-hally.webp?v=20261002c" alt="hally" /><figcaption>hally</figcaption></figure>
+        <figure class="stage-slide"><img class="stage-photo" src="assets/players/stage-s0tf1k.webp?v=20261002c" alt="S0tF1k" style="object-position:50% 10%" /><figcaption>S0tF1k</figcaption></figure>
+
+        <button type="button" class="stage-arrow is-prev" id="stagePrev" aria-label="上一位">‹</button>
+        <button type="button" class="stage-arrow is-next" id="stageNext" aria-label="下一位">›</button>
+        <span class="stage-count" id="stageCount">1 / 7</span>
+      </main>
+    </div>
+
+    <script>
+      (function () {
+        var slides = Array.prototype.slice.call(document.querySelectorAll('.stage-slide'));
+        var counter = document.getElementById('stageCount');
+        var current = 0;
+
+        function show(index) {
+          current = (index + slides.length) % slides.length;
+          slides.forEach(function (slide, i) { slide.classList.toggle('is-active', i === current); });
+          if (counter) counter.textContent = (current + 1) + ' / ' + slides.length;
+        }
+
+        document.getElementById('stagePrev').addEventListener('click', function () { show(current - 1); });
+        document.getElementById('stageNext').addEventListener('click', function () { show(current + 1); });
+        document.addEventListener('keydown', function (e) {
+          if (e.key === 'ArrowLeft') show(current - 1);
+          if (e.key === 'ArrowRight') show(current + 1);
+        });
+        show(0);
+      })();
+    </script>
+  </body>
+</html>
+
+

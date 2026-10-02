@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="杨睿的个人博客：写设计、技术与那些让生活变得更清醒的事。" />
+    <meta name="description" content="杨睿的个人博客：写设计、技术与那些让生活变得更清醒的事" />
     <title>杨睿 · 个人博客</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -33,8 +33,8 @@
         <section class="hero section-wrap">
           <div class="hero-copy">
             <p class="eyebrow"><span class="eyebrow-dot"></span>独立写作者 · 设计与技术</p>
-            <h1>把复杂的事，<br /><em>说得简单一点。</em></h1>
-            <p class="hero-intro">这里是杨睿的个人博客。我记录设计、技术、阅读和日常观察，也分享那些真正改变过我的小方法。</p>
+            <h1>把复杂的事，<br /><em>说得简单一点</em></h1>
+            <p class="hero-intro">这里是杨睿的个人博客我记录设计、技术、阅读和日常观察，也分享那些真正改变过我的小方法</p>
             <div class="hero-meta">
             <a class="text-link" href="#documents">上传一份文档 <span>↓</span></a>
               <span class="meta-separator">·</span>
@@ -43,7 +43,7 @@
           </div>
           <div class="hero-note">
             <div class="note-topline"><span>FIELD NOTES / 2026—NOW</span><span>01</span></div>
-            <div class="note-quote">“愿你把渺小的日子，<br />过成一首闪亮的歌。”</div>
+            <div class="note-quote">“愿你把渺小的日子，<br />过成一首闪亮的歌”</div>
             <div class="note-author">— 写给每一个认真生活的人</div>
             <div class="note-lines" aria-hidden="true"></div>
           </div>
@@ -57,27 +57,28 @@
 
         <section class="content-grid section-wrap" id="documents">
           <div class="main-column">
+
+            <section class="guestbook-panel" id="guestbook">
+              <div class="section-heading compact"><div><p class="eyebrow">A NOTE FOR YANG RUI</p><h2>留言区</h2></div><span class="article-count">每页 6 条</span></div>
+              <form class="guestbook-form" id="guestbookForm"><textarea id="messageInput" maxlength="280" placeholder="写点什么吧，也可以加上 emoji ✨" required></textarea><div class="form-row"><span id="messageCount">0 / 280</span><button type="submit">留下留言 →</button></div></form>
+              <div class="message-list" id="messageList"></div>
+              <nav class="message-pagination" id="messagePagination" aria-label="留言分页"></nav>
+            </section>
+
             <div class="section-heading">
               <div>
                 <p class="eyebrow">YOUR DOCUMENTS</p>
                 <h2>上传你的文档</h2>
               </div>
               <span class="article-count">PDF / DOC / DOCX</span>
-            </div>
-            <div class="upload-panel">
+            </div>            <div class="upload-panel">
               <div class="upload-symbol">↥</div>
               <h3>把 PDF 或 Word 文档放到这里</h3>
-              <p>支持 PDF、DOC、DOCX。文件只会在当前浏览器中预览，不会自动公开。</p>
+              <p>支持 PDF、DOC、DOCX文件只会在当前浏览器中预览，不会自动公开</p>
               <label class="upload-button" for="documentInput">选择文件</label>
               <input id="documentInput" type="file" accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" />
               <div class="upload-list" id="uploadList">还没有上传文档</div>
             </div>
-
-            <section class="guestbook-panel" id="guestbook">
-              <div class="section-heading compact"><div><p class="eyebrow">A NOTE FOR YANG RUI</p><h2>留言区</h2></div></div>
-              <form class="guestbook-form" id="guestbookForm"><textarea id="messageInput" maxlength="280" placeholder="写点什么吧，也可以加上 emoji ✨" required></textarea><div class="form-row"><span id="messageCount">0 / 280</span><button type="submit">留下留言 →</button></div></form>
-              <div class="message-list" id="messageList"></div>
-            </section>
 
             <section class="goals-panel" id="goals">
               <div class="section-heading compact"><div><p class="eyebrow">A LITTLE FURTHER</p><h2>我的目标</h2></div><span class="article-count">短期 · 长期</span></div>
@@ -90,8 +91,8 @@
             <section class="side-card profile-card" id="about">
               <div class="profile-avatar">L<span>m</span></div>
               <p class="eyebrow">ABOUT THE AUTHOR</p>
-              <h3>你好，我是杨睿。</h3>
-              <p>一个在屏幕前工作，也努力在真实世界里生活的人。现在是一名产品设计师，偶尔写字，偶尔拍照。</p>
+              <h3>你好，我是杨睿</h3>
+              <p>一个在屏幕前工作，也努力在真实世界里生活的人现在是一名产品设计师，偶尔写字，偶尔拍照</p>
               <a href="#about-more" class="side-link">更多关于我 <span>↗</span></a>
             </section>
 
@@ -103,11 +104,17 @@
               <p class="updated-time">最后更新于 2026 年 9 月</p>
             </section>
 
+            <a class="side-card cs2-card" id="cs2" href="cs2.html" aria-label="打开 Team Spirit 副页">
+              <span class="cs2-card-icon"><img src="assets/team-spirit-logo.svg" alt="Team Spirit 队标" /></span>
+              <span class="cs2-card-copy"><strong class="cs2-card-title">Team Spirit</strong><span class="cs2-card-note">我的 CS2 主队</span></span>
+              <span class="cs2-card-arrow">↗</span>
+            </a>
+
             <section class="side-card newsletter-card" id="subscribe">
               <div class="newsletter-icon">✳</div>
               <p class="eyebrow">LET'S STAY IN TOUCH</p>
               <h3>偶尔寄一封信</h3>
-              <p>不追热点，只分享最近读到、想到和正在实践的事。每月 1–2 封。</p>
+              <p>不追热点，只分享最近读到、想到和正在实践的事每月 1–2 封</p>
               <form class="subscribe-form" id="subscribeForm">
                 <label class="sr-only" for="email">你的邮箱</label>
                 <input id="email" type="email" placeholder="你的邮箱地址" required />
@@ -136,5 +143,12 @@
     <script src="script.js?v=20261001-albums"></script>
   </body>
 </html>
+
+
+
+
+
+
+
 
 
